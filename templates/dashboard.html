@@ -7,23 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .loading {
-            display: none;
-        }
-        .loading.active {
-            display: flex;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .loading { display: none; }
+        .loading.active { display: flex; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -34,8 +22,26 @@
                 <div class="flex items-center">
                     <a href="/" class="text-2xl font-bold gradient-text">⚡ ContentBlast</a>
                 </div>
-                <div class="flex items-center">
-                    <span class="text-sm text-gray-500 mr-4">Free: <span id="credits">5</span> repurposes left</span>
+                <div class="flex items-center space-x-4">
+                    {% if user %}
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">
+                            <i class="fas fa-bolt text-purple-500"></i>
+                            <span id="credits">{{ user.repurposes_remaining }}</span> left
+                        </span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium">{{ user.name }}</span>
+                            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">{{ user.plan }}</span>
+                        </div>
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                    {% else %}
+                    <span class="text-sm text-gray-500">Guest: <span id="credits">5</span> free left</span>
+                    <a href="/login" class="text-purple-600 hover:text-purple-800 font-medium">Log In</a>
+                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Sign Up Free</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -49,7 +55,7 @@
                 <form id="repurposeForm">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
-                        <select id="contentType" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <select id="contentType" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
                             <option value="article">Article / Blog Post</option>
                             <option value="transcript">Video Transcript</option>
                             <option value="notes">Notes / Ideas</option>
@@ -58,24 +64,18 @@
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Paste Your Content</label>
-                        <textarea 
-                            id="content" 
-                            rows="12" 
-                            class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Paste your article, blog post, transcript, or any content here...
+                        <textarea id="content" rows="12" 
+                            class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+                            placeholder="Paste your article, blog post, or any content here...
 
-Minimum 50 characters required."
-                        ></textarea>
+Minimum 50 characters."></textarea>
                         <div class="flex justify-between text-sm text-gray-500 mt-1">
                             <span id="charCount">0 characters</span>
                             <span>Max 10,000</span>
                         </div>
                     </div>
-                    <button 
-                        type="submit" 
-                        id="submitBtn"
-                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center"
-                    >
+                    <button type="submit" id="submitBtn"
+                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center">
                         <span id="btnText">⚡ Repurpose Content</span>
                         <div id="btnLoader" class="loading items-center">
                             <i class="fas fa-circle-notch spinner mr-2"></i> Processing...
@@ -197,7 +197,6 @@ Minimum 50 characters required."
     </div>
 
     <script>
-        // Character count
         const contentArea = document.getElementById('content');
         const charCount = document.getElementById('charCount');
 
@@ -205,7 +204,6 @@ Minimum 50 characters required."
             charCount.textContent = contentArea.value.length + ' characters';
         });
 
-        // Form submission
         document.getElementById('repurposeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -220,7 +218,6 @@ Minimum 50 characters required."
                 return;
             }
 
-            // Show loading
             btnText.classList.add('hidden');
             btnLoader.classList.add('active');
             submitBtn.disabled = true;
@@ -243,9 +240,12 @@ Minimum 50 characters required."
                 const data = await response.json();
                 displayResults(data);
 
-                // Update credits
-                const credits = document.getElementById('credits');
-                credits.textContent = Math.max(0, parseInt(credits.textContent) - 1);
+                if (data.repurposes_remaining !== undefined) {
+                    document.getElementById('credits').textContent = data.repurposes_remaining;
+                } else {
+                    const credits = document.getElementById('credits');
+                    credits.textContent = Math.max(0, parseInt(credits.textContent) - 1);
+                }
 
             } catch (error) {
                 alert('Error: ' + error.message);
@@ -260,52 +260,43 @@ Minimum 50 characters required."
             document.getElementById('placeholder').classList.add('hidden');
             document.getElementById('results').classList.remove('hidden');
 
-            // Twitter
-            const twitter = document.getElementById('twitter');
-            twitter.innerHTML = data.twitter_threads.map((tweet, i) => 
+            document.getElementById('twitter').innerHTML = data.twitter_threads.map((tweet, i) => 
                 `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${tweet}</div>`
             ).join('');
 
-            // LinkedIn
             document.getElementById('linkedin').textContent = data.linkedin_post;
 
-            // Instagram
-            const instagram = document.getElementById('instagram');
-            instagram.innerHTML = data.instagram_captions.map((cap, i) => 
+            document.getElementById('instagram').innerHTML = data.instagram_captions.map((cap, i) => 
                 `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${cap}</div>`
             ).join('');
 
-            // Email
-            const email = document.getElementById('email');
-            email.innerHTML = `<div class="bg-gray-50 p-3 rounded mb-2"><strong>Subject:</strong> ${data.email_newsletter.subject}</div>
-                              <div class="bg-gray-50 p-3 rounded whitespace-pre-wrap">${data.email_newsletter.body}</div>`;
+            document.getElementById('email').innerHTML = `<div class="bg-gray-50 p-3 rounded mb-2"><strong>Subject:</strong> ${data.email_newsletter.subject}</div>
+                <div class="bg-gray-50 p-3 rounded whitespace-pre-wrap">${data.email_newsletter.body}</div>`;
 
-            // TikTok
-            const tiktok = document.getElementById('tiktok');
-            tiktok.innerHTML = data.tiktok_scripts.map((script, i) => 
+            document.getElementById('tiktok').innerHTML = data.tiktok_scripts.map((script, i) => 
                 `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">Script ${i+1}:</span><br>${script}</div>`
             ).join('');
 
-            // YouTube
             document.getElementById('youtube').textContent = data.youtube_description;
 
-            // Hashtags
-            const hashtags = document.getElementById('hashtags');
-            hashtags.innerHTML = data.key_hashtags.map(tag => 
+            document.getElementById('hashtags').innerHTML = data.key_hashtags.map(tag => 
                 `<span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full mr-2 mb-2">#${tag}</span>`
             ).join('');
         }
 
         function copySection(section) {
             const el = document.getElementById(section);
-            const text = el.innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                // Show feedback
+            navigator.clipboard.writeText(el.innerText).then(() => {
                 const btn = event.target.closest('button');
                 const originalHTML = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
                 setTimeout(() => btn.innerHTML = originalHTML, 1500);
             });
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/';
         }
     </script>
 </body>

@@ -1,12 +1,14 @@
-from fastapi import FastAPI, Request, Form, HTTPException, Header
+from fastapi import FastAPI, Request, Form, HTTPException, Header, Cookie, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
+from typing import Optional
 import os
 
 from app.ai_engine import ContentRepurposer
 from app.stripe_handler import StripePayments, PLANS
+from app.auth import AuthSystem
 
 # Load environment variables
 load_dotenv()
@@ -19,12 +21,21 @@ app = FastAPI(
 )
 
 # Mount static files and templates
+os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Initialize services
 repurposer = ContentRepurposer()
 payments = StripePayments()
+auth = AuthSystem()
+
+
+# Helper to get current user
+def get_current_user(session_token: str = None):
+    if not session_token:
+        return None
+    return AuthSystem.get_user_from_session(session_token)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -34,15 +45,35 @@ async def home(request: Request):
 
 
 @app.get("/app", response_class=HTMLResponse)
-async def dashboard(request: Request):
+async def dashboard(request: Request, session_token: Optional[str] = Cookie(None)):
     """Main application dashboard"""
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    user = get_current_user(session_token)
+    return templates.TemplateResponse("dashboard.html", {"request": request, "user": user})
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Login page"""
+    user = get_current_user(session_token)
+    if user:
+        return RedirectResponse(url="/app", status_code=302)
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Register page"""
+    user = get_current_user(session_token)
+    if user:
+        return RedirectResponse(url="/app", status_code=302)
+    return templates.TemplateResponse("register.html", {"request": request})
 
 
 @app.get("/pricing", response_class=HTMLResponse)
-async def pricing(request: Request):
+async def pricing(request: Request, session_token: Optional[str] = Cookie(None)):
     """Pricing page"""
-    return templates.TemplateResponse("pricing.html", {"request": request, "plans": PLANS})
+    user = get_current_user(session_token)
+    return templates.TemplateResponse("pricing.html", {"request": request, "plans": PLANS, "user": user})
 
 
 @app.get("/success", response_class=HTMLResponse)
@@ -51,14 +82,97 @@ async def success(request: Request):
     return templates.TemplateResponse("success.html", {"request": request})
 
 
+# Auth API endpoints
+@app.post("/api/register")
+async def api_register(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    name: str = Form(default="")
+):
+    """Register new user."""
+    result = AuthSystem.register(email, password, name)
+
+    if result.get("success"):
+        # Auto-login after registration
+        login_result = AuthSystem.login(email, password)
+        if login_result.get("success"):
+            response = JSONResponse(content={"success": True, "redirect": "/app"})
+            response.set_cookie(
+                key="session_token",
+                value=login_result["session_token"],
+                max_age=7*24*60*60,  # 7 days
+                httponly=True,
+                samesite="lax"
+            )
+            return response
+
+    return JSONResponse(content=result)
+
+
+@app.post("/api/login")
+async def api_login(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    """Login user."""
+    result = AuthSystem.login(email, password)
+
+    if result.get("success"):
+        response = JSONResponse(content={"success": True, "redirect": "/app", "user": result["user"]})
+        response.set_cookie(
+            key="session_token",
+            value=result["session_token"],
+            max_age=7*24*60*60,
+            httponly=True,
+            samesite="lax"
+        )
+        return response
+
+    return JSONResponse(content=result)
+
+
+@app.post("/api/logout")
+async def api_logout(response: Response, session_token: Optional[str] = Cookie(None)):
+    """Logout user."""
+    if session_token:
+        AuthSystem.logout(session_token)
+
+    response = JSONResponse(content={"success": True, "redirect": "/"})
+    response.delete_cookie(key="session_token")
+    return response
+
+
+@app.get("/api/me")
+async def api_me(session_token: Optional[str] = Cookie(None)):
+    """Get current user info."""
+    user = get_current_user(session_token)
+    if user:
+        return JSONResponse(content={"success": True, "user": user})
+    return JSONResponse(content={"success": False, "error": "Not logged in"})
+
+
 @app.post("/api/repurpose")
 async def repurpose_content(
     content: str = Form(...),
-    content_type: str = Form(default="article")
+    content_type: str = Form(default="article"),
+    session_token: Optional[str] = Cookie(None)
 ):
     """
     API endpoint to repurpose content.
     """
+    # Check user and limits
+    user = get_current_user(session_token)
+
+    if user:
+        # Check repurpose limit
+        if user["repurposes_limit"] > 0 and user["repurposes_used"] >= user["repurposes_limit"]:
+            raise HTTPException(
+                status_code=403,
+                detail="Repurpose limit reached. Please upgrade your plan!"
+            )
+
     if not content or len(content.strip()) < 50:
         raise HTTPException(
             status_code=400, 
@@ -78,6 +192,11 @@ async def repurpose_content(
     result = repurposer.repurpose(content, content_type)
 
     if result.get("success"):
+        # Use repurpose credit if logged in
+        if user:
+            usage = AuthSystem.use_repurpose(user["email"])
+            result["repurposes_remaining"] = usage.get("repurposes_remaining", 0)
+
         result["cost_estimate"] = estimate
         return JSONResponse(content=result)
     else:
