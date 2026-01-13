@@ -8,7 +8,10 @@ import os
 
 from app.ai_engine import ContentRepurposer
 from app.stripe_handler import StripePayments, PLANS
-from app.auth import AuthSystem
+from app.auth import AuthSystem, ensure_data_dir
+
+# Ensure data folder exists on startup
+ensure_data_dir()
 
 # Load environment variables
 load_dotenv()
