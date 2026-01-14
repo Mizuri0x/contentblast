@@ -7,16 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-dark { background: rgba(30, 30, 40, 0.8); backdrop-filter: blur(10px); }
+        .glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
         .loading { display: none; }
         .loading.active { display: flex; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
+        textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5); }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-950 text-gray-100 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-gray-900/80 backdrop-blur-md shadow-lg border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -25,22 +28,22 @@
                 <div class="flex items-center space-x-4">
                     {% if user %}
                     <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-600">
-                            <i class="fas fa-bolt text-purple-500"></i>
-                            <span id="credits">{{ user.repurposes_remaining }}</span> left
+                        <span class="text-sm text-gray-400">
+                            <i class="fas fa-bolt text-purple-400"></i>
+                            <span id="credits" class="text-purple-300 font-semibold">{{ user.repurposes_remaining }}</span> left
                         </span>
                         <div class="flex items-center space-x-2">
-                            <span class="text-sm font-medium">{{ user.name }}</span>
-                            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">{{ user.plan }}</span>
+                            <span class="text-sm font-medium text-gray-300">{{ user.name }}</span>
+                            <span class="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded-full border border-purple-700">{{ user.plan }}</span>
                         </div>
-                        <button onclick="logout()" class="text-gray-500 hover:text-gray-700">
+                        <button onclick="logout()" class="text-gray-500 hover:text-gray-300 transition">
                             <i class="fas fa-sign-out-alt"></i>
                         </button>
                     </div>
                     {% else %}
-                    <span class="text-sm text-gray-500">Guest: <span id="credits">5</span> free left</span>
-                    <a href="/login" class="text-purple-600 hover:text-purple-800 font-medium">Log In</a>
-                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Sign Up Free</a>
+                    <span class="text-sm text-gray-500">Guest: <span id="credits" class="text-purple-300">5</span> free left</span>
+                    <a href="/login" class="text-purple-400 hover:text-purple-300 font-medium transition">Log In</a>
+                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition">Sign Up Free</a>
                     {% endif %}
                 </div>
             </div>
@@ -50,12 +53,12 @@
     <div class="max-w-7xl mx-auto px-4 py-8">
         <div class="grid lg:grid-cols-2 gap-8">
             <!-- Input Section -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
-                <h2 class="text-xl font-semibold mb-4">📝 Your Content</h2>
+            <div class="card-dark rounded-xl shadow-lg p-6 border border-gray-800">
+                <h2 class="text-xl font-semibold mb-4 text-white">📝 Your Content</h2>
                 <form id="repurposeForm">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
-                        <select id="contentType" class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Content Type</label>
+                        <select id="contentType" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-purple-500 focus:outline-none">
                             <option value="article">Article / Blog Post</option>
                             <option value="transcript">Video Transcript</option>
                             <option value="notes">Notes / Ideas</option>
@@ -63,9 +66,9 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Paste Your Content</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Paste Your Content</label>
                         <textarea id="content" rows="12" 
-                            class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
                             placeholder="Paste your article, blog post, or any content here...
 
 Minimum 50 characters."></textarea>
@@ -75,7 +78,7 @@ Minimum 50 characters."></textarea>
                         </div>
                     </div>
                     <button type="submit" id="submitBtn"
-                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center">
+                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-500 transition flex items-center justify-center glow">
                         <span id="btnText">⚡ Repurpose Content</span>
                         <div id="btnLoader" class="loading items-center">
                             <i class="fas fa-circle-notch spinner mr-2"></i> Processing...
@@ -85,23 +88,23 @@ Minimum 50 characters."></textarea>
             </div>
 
             <!-- Output Section -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
-                <h2 class="text-xl font-semibold mb-4">🎯 Generated Content</h2>
+            <div class="card-dark rounded-xl shadow-lg p-6 border border-gray-800">
+                <h2 class="text-xl font-semibold mb-4 text-white">🎯 Generated Content</h2>
 
-                <div id="placeholder" class="text-center py-16 text-gray-400">
-                    <i class="fas fa-magic text-4xl mb-4"></i>
+                <div id="placeholder" class="text-center py-16 text-gray-600">
+                    <i class="fas fa-magic text-4xl mb-4 text-purple-900"></i>
                     <p>Your repurposed content will appear here</p>
                 </div>
 
-                <div id="results" class="hidden space-y-6">
+                <div id="results" class="hidden space-y-6 max-h-[600px] overflow-y-auto pr-2">
                     <!-- Twitter -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
                                 <i class="fab fa-twitter text-blue-400 mr-2"></i>
-                                <span class="font-semibold">Twitter Thread</span>
+                                <span class="font-semibold text-white">Twitter Thread</span>
                             </div>
-                            <button onclick="copySection('twitter')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('twitter')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy All
                             </button>
                         </div>
@@ -109,27 +112,27 @@ Minimum 50 characters."></textarea>
                     </div>
 
                     <!-- LinkedIn -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
-                                <i class="fab fa-linkedin text-blue-700 mr-2"></i>
-                                <span class="font-semibold">LinkedIn Post</span>
+                                <i class="fab fa-linkedin text-blue-500 mr-2"></i>
+                                <span class="font-semibold text-white">LinkedIn Post</span>
                             </div>
-                            <button onclick="copySection('linkedin')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('linkedin')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy
                             </button>
                         </div>
-                        <div id="linkedin" class="text-sm whitespace-pre-wrap"></div>
+                        <div id="linkedin" class="text-sm text-gray-300 whitespace-pre-wrap"></div>
                     </div>
 
                     <!-- Instagram -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
                                 <i class="fab fa-instagram text-pink-500 mr-2"></i>
-                                <span class="font-semibold">Instagram Captions</span>
+                                <span class="font-semibold text-white">Instagram Captions</span>
                             </div>
-                            <button onclick="copySection('instagram')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('instagram')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy All
                             </button>
                         </div>
@@ -137,27 +140,27 @@ Minimum 50 characters."></textarea>
                     </div>
 
                     <!-- Email -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
-                                <i class="fas fa-envelope text-gray-600 mr-2"></i>
-                                <span class="font-semibold">Email Newsletter</span>
+                                <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                                <span class="font-semibold text-white">Email Newsletter</span>
                             </div>
-                            <button onclick="copySection('email')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('email')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy
                             </button>
                         </div>
-                        <div id="email" class="text-sm"></div>
+                        <div id="email" class="text-sm text-gray-300"></div>
                     </div>
 
                     <!-- TikTok -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
-                                <i class="fab fa-tiktok text-black mr-2"></i>
-                                <span class="font-semibold">TikTok Scripts</span>
+                                <i class="fab fa-tiktok text-white mr-2"></i>
+                                <span class="font-semibold text-white">TikTok Scripts</span>
                             </div>
-                            <button onclick="copySection('tiktok')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('tiktok')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy All
                             </button>
                         </div>
@@ -165,27 +168,27 @@ Minimum 50 characters."></textarea>
                     </div>
 
                     <!-- YouTube -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
-                                <i class="fab fa-youtube text-red-600 mr-2"></i>
-                                <span class="font-semibold">YouTube Description</span>
+                                <i class="fab fa-youtube text-red-500 mr-2"></i>
+                                <span class="font-semibold text-white">YouTube Description</span>
                             </div>
-                            <button onclick="copySection('youtube')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('youtube')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy
                             </button>
                         </div>
-                        <div id="youtube" class="text-sm whitespace-pre-wrap"></div>
+                        <div id="youtube" class="text-sm text-gray-300 whitespace-pre-wrap"></div>
                     </div>
 
                     <!-- Hashtags -->
-                    <div class="border rounded-lg p-4">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
-                                <i class="fas fa-hashtag text-purple-600 mr-2"></i>
-                                <span class="font-semibold">Suggested Hashtags</span>
+                                <i class="fas fa-hashtag text-purple-400 mr-2"></i>
+                                <span class="font-semibold text-white">Suggested Hashtags</span>
                             </div>
-                            <button onclick="copySection('hashtags')" class="text-sm text-purple-600 hover:text-purple-800">
+                            <button onclick="copySection('hashtags')" class="text-sm text-purple-400 hover:text-purple-300 transition">
                                 <i class="fas fa-copy mr-1"></i> Copy
                             </button>
                         </div>
@@ -261,26 +264,26 @@ Minimum 50 characters."></textarea>
             document.getElementById('results').classList.remove('hidden');
 
             document.getElementById('twitter').innerHTML = data.twitter_threads.map((tweet, i) => 
-                `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${tweet}</div>`
+                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">${i+1}.</span> ${tweet}</div>`
             ).join('');
 
             document.getElementById('linkedin').textContent = data.linkedin_post;
 
             document.getElementById('instagram').innerHTML = data.instagram_captions.map((cap, i) => 
-                `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${cap}</div>`
+                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">${i+1}.</span> ${cap}</div>`
             ).join('');
 
-            document.getElementById('email').innerHTML = `<div class="bg-gray-50 p-3 rounded mb-2"><strong>Subject:</strong> ${data.email_newsletter.subject}</div>
-                <div class="bg-gray-50 p-3 rounded whitespace-pre-wrap">${data.email_newsletter.body}</div>`;
+            document.getElementById('email').innerHTML = `<div class="bg-gray-900/50 p-3 rounded mb-2 text-gray-300"><strong class="text-white">Subject:</strong> ${data.email_newsletter.subject}</div>
+                <div class="bg-gray-900/50 p-3 rounded whitespace-pre-wrap text-gray-300">${data.email_newsletter.body}</div>`;
 
             document.getElementById('tiktok').innerHTML = data.tiktok_scripts.map((script, i) => 
-                `<div class="bg-gray-50 p-3 rounded"><span class="text-purple-600 font-medium">Script ${i+1}:</span><br>${script}</div>`
+                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">Script ${i+1}:</span><br>${script}</div>`
             ).join('');
 
             document.getElementById('youtube').textContent = data.youtube_description;
 
             document.getElementById('hashtags').innerHTML = data.key_hashtags.map(tag => 
-                `<span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full mr-2 mb-2">#${tag}</span>`
+                `<span class="inline-block bg-purple-900/50 text-purple-300 px-3 py-1 rounded-full mr-2 mb-2 border border-purple-700">#${tag}</span>`
             ).join('');
         }
 
