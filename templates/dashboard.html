@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContentBlast - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card-dark { background: rgba(30, 30, 40, 0.8); backdrop-filter: blur(10px); }
-        .glow { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dark .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .loading { display: none; }
         .loading.active { display: flex; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
-        textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5); }
     </style>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    </script>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-gray-900/80 backdrop-blur-md shadow-lg border-b border-gray-800">
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-900/80 dark:backdrop-blur-md shadow-sm dark:shadow-lg dark:border-b dark:border-gray-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -27,24 +31,22 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     {% if user %}
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-400">
-                            <i class="fas fa-bolt text-purple-400"></i>
-                            <span id="credits" class="text-purple-300 font-semibold">{{ user.repurposes_remaining }}</span> left
-                        </span>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm font-medium text-gray-300">{{ user.name }}</span>
-                            <span class="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded-full border border-purple-700">{{ user.plan }}</span>
-                        </div>
-                        <button onclick="logout()" class="text-gray-500 hover:text-gray-300 transition">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </div>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-bolt text-purple-500"></i>
+                        <span id="credits" class="text-purple-600 dark:text-purple-300 font-semibold">{{ user.repurposes_remaining }}</span> left
+                    </span>
+                    <span class="text-sm font-medium">{{ user.name }}</span>
+                    <span class="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 px-2 py-1 rounded-full">{{ user.plan }}</span>
+                    <button onclick="logout()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><i class="fas fa-sign-out-alt"></i></button>
                     {% else %}
-                    <span class="text-sm text-gray-500">Guest: <span id="credits" class="text-purple-300">5</span> free left</span>
-                    <a href="/login" class="text-purple-400 hover:text-purple-300 font-medium transition">Log In</a>
-                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition">Sign Up Free</a>
+                    <span class="text-sm text-gray-500">Guest: <span id="credits" class="text-purple-600 dark:text-purple-300">5</span> free</span>
+                    <a href="/login" class="text-purple-600 dark:text-purple-400 hover:text-purple-800 font-medium">Log In</a>
+                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Sign Up</a>
                     {% endif %}
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -52,13 +54,12 @@
 
     <div class="max-w-7xl mx-auto px-4 py-8">
         <div class="grid lg:grid-cols-2 gap-8">
-            <!-- Input Section -->
-            <div class="card-dark rounded-xl shadow-lg p-6 border border-gray-800">
-                <h2 class="text-xl font-semibold mb-4 text-white">📝 Your Content</h2>
+            <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm dark:shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h2 class="text-xl font-semibold mb-4">📝 Your Content</h2>
                 <form id="repurposeForm">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Content Type</label>
-                        <select id="contentType" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-purple-500 focus:outline-none">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">Content Type</label>
+                        <select id="contentType" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             <option value="article">Article / Blog Post</option>
                             <option value="transcript">Video Transcript</option>
                             <option value="notes">Notes / Ideas</option>
@@ -66,131 +67,73 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Paste Your Content</label>
-                        <textarea id="content" rows="12" 
-                            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
-                            placeholder="Paste your article, blog post, or any content here...
-
-Minimum 50 characters."></textarea>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">Paste Your Content</label>
+                        <textarea id="content" rows="12" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Paste your article, blog post, or any content here..."></textarea>
                         <div class="flex justify-between text-sm text-gray-500 mt-1">
                             <span id="charCount">0 characters</span>
                             <span>Max 10,000</span>
                         </div>
                     </div>
-                    <button type="submit" id="submitBtn"
-                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-500 transition flex items-center justify-center glow">
+                    <button type="submit" id="submitBtn" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center">
                         <span id="btnText">⚡ Repurpose Content</span>
-                        <div id="btnLoader" class="loading items-center">
-                            <i class="fas fa-circle-notch spinner mr-2"></i> Processing...
-                        </div>
+                        <div id="btnLoader" class="loading items-center"><i class="fas fa-circle-notch spinner mr-2"></i> Processing...</div>
                     </button>
                 </form>
             </div>
 
-            <!-- Output Section -->
-            <div class="card-dark rounded-xl shadow-lg p-6 border border-gray-800">
-                <h2 class="text-xl font-semibold mb-4 text-white">🎯 Generated Content</h2>
-
-                <div id="placeholder" class="text-center py-16 text-gray-600">
-                    <i class="fas fa-magic text-4xl mb-4 text-purple-900"></i>
+            <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm dark:shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h2 class="text-xl font-semibold mb-4">🎯 Generated Content</h2>
+                <div id="placeholder" class="text-center py-16 text-gray-400">
+                    <i class="fas fa-magic text-4xl mb-4"></i>
                     <p>Your repurposed content will appear here</p>
                 </div>
-
-                <div id="results" class="hidden space-y-6 max-h-[600px] overflow-y-auto pr-2">
-                    <!-- Twitter -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                <div id="results" class="hidden space-y-6 max-h-[600px] overflow-y-auto">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fab fa-twitter text-blue-400 mr-2"></i>
-                                <span class="font-semibold text-white">Twitter Thread</span>
-                            </div>
-                            <button onclick="copySection('twitter')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy All
-                            </button>
+                            <div class="flex items-center"><i class="fab fa-twitter text-blue-400 mr-2"></i><span class="font-semibold">Twitter Thread</span></div>
+                            <button onclick="copySection('twitter')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
                         <div id="twitter" class="space-y-2 text-sm"></div>
                     </div>
-
-                    <!-- LinkedIn -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fab fa-linkedin text-blue-500 mr-2"></i>
-                                <span class="font-semibold text-white">LinkedIn Post</span>
-                            </div>
-                            <button onclick="copySection('linkedin')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy
-                            </button>
+                            <div class="flex items-center"><i class="fab fa-linkedin text-blue-700 mr-2"></i><span class="font-semibold">LinkedIn</span></div>
+                            <button onclick="copySection('linkedin')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
-                        <div id="linkedin" class="text-sm text-gray-300 whitespace-pre-wrap"></div>
+                        <div id="linkedin" class="text-sm whitespace-pre-wrap"></div>
                     </div>
-
-                    <!-- Instagram -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fab fa-instagram text-pink-500 mr-2"></i>
-                                <span class="font-semibold text-white">Instagram Captions</span>
-                            </div>
-                            <button onclick="copySection('instagram')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy All
-                            </button>
+                            <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-2"></i><span class="font-semibold">Instagram</span></div>
+                            <button onclick="copySection('instagram')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
                         <div id="instagram" class="space-y-2 text-sm"></div>
                     </div>
-
-                    <!-- Email -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fas fa-envelope text-gray-400 mr-2"></i>
-                                <span class="font-semibold text-white">Email Newsletter</span>
-                            </div>
-                            <button onclick="copySection('email')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy
-                            </button>
+                            <div class="flex items-center"><i class="fas fa-envelope text-gray-500 mr-2"></i><span class="font-semibold">Email</span></div>
+                            <button onclick="copySection('email')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
-                        <div id="email" class="text-sm text-gray-300"></div>
+                        <div id="email" class="text-sm"></div>
                     </div>
-
-                    <!-- TikTok -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fab fa-tiktok text-white mr-2"></i>
-                                <span class="font-semibold text-white">TikTok Scripts</span>
-                            </div>
-                            <button onclick="copySection('tiktok')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy All
-                            </button>
+                            <div class="flex items-center"><i class="fab fa-tiktok mr-2"></i><span class="font-semibold">TikTok</span></div>
+                            <button onclick="copySection('tiktok')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
                         <div id="tiktok" class="space-y-2 text-sm"></div>
                     </div>
-
-                    <!-- YouTube -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fab fa-youtube text-red-500 mr-2"></i>
-                                <span class="font-semibold text-white">YouTube Description</span>
-                            </div>
-                            <button onclick="copySection('youtube')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy
-                            </button>
+                            <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-2"></i><span class="font-semibold">YouTube</span></div>
+                            <button onclick="copySection('youtube')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
-                        <div id="youtube" class="text-sm text-gray-300 whitespace-pre-wrap"></div>
+                        <div id="youtube" class="text-sm whitespace-pre-wrap"></div>
                     </div>
-
-                    <!-- Hashtags -->
-                    <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center">
-                                <i class="fas fa-hashtag text-purple-400 mr-2"></i>
-                                <span class="font-semibold text-white">Suggested Hashtags</span>
-                            </div>
-                            <button onclick="copySection('hashtags')" class="text-sm text-purple-400 hover:text-purple-300 transition">
-                                <i class="fas fa-copy mr-1"></i> Copy
-                            </button>
+                            <div class="flex items-center"><i class="fas fa-hashtag text-purple-500 mr-2"></i><span class="font-semibold">Hashtags</span></div>
+                            <button onclick="copySection('hashtags')" class="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800"><i class="fas fa-copy mr-1"></i> Copy</button>
                         </div>
                         <div id="hashtags" class="text-sm"></div>
                     </div>
@@ -200,107 +143,59 @@ Minimum 50 characters."></textarea>
     </div>
 
     <script>
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('light');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
         const contentArea = document.getElementById('content');
         const charCount = document.getElementById('charCount');
-
-        contentArea.addEventListener('input', () => {
-            charCount.textContent = contentArea.value.length + ' characters';
-        });
+        contentArea.addEventListener('input', () => { charCount.textContent = contentArea.value.length + ' characters'; });
 
         document.getElementById('repurposeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const content = document.getElementById('content').value;
             const contentType = document.getElementById('contentType').value;
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('btnText');
             const btnLoader = document.getElementById('btnLoader');
-
-            if (content.length < 50) {
-                alert('Please enter at least 50 characters');
-                return;
-            }
-
-            btnText.classList.add('hidden');
-            btnLoader.classList.add('active');
-            submitBtn.disabled = true;
-
+            if (content.length < 50) { alert('Please enter at least 50 characters'); return; }
+            btnText.classList.add('hidden'); btnLoader.classList.add('active'); submitBtn.disabled = true;
             try {
                 const formData = new FormData();
                 formData.append('content', content);
                 formData.append('content_type', contentType);
-
-                const response = await fetch('/api/repurpose', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Something went wrong');
-                }
-
+                const response = await fetch('/api/repurpose', { method: 'POST', body: formData });
+                if (!response.ok) { const error = await response.json(); throw new Error(error.detail || 'Something went wrong'); }
                 const data = await response.json();
                 displayResults(data);
-
-                if (data.repurposes_remaining !== undefined) {
-                    document.getElementById('credits').textContent = data.repurposes_remaining;
-                } else {
-                    const credits = document.getElementById('credits');
-                    credits.textContent = Math.max(0, parseInt(credits.textContent) - 1);
-                }
-
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                btnText.classList.remove('hidden');
-                btnLoader.classList.remove('active');
-                submitBtn.disabled = false;
-            }
+                if (data.repurposes_remaining !== undefined) { document.getElementById('credits').textContent = data.repurposes_remaining; }
+                else { const credits = document.getElementById('credits'); credits.textContent = Math.max(0, parseInt(credits.textContent) - 1); }
+            } catch (error) { alert('Error: ' + error.message); }
+            finally { btnText.classList.remove('hidden'); btnLoader.classList.remove('active'); submitBtn.disabled = false; }
         });
 
         function displayResults(data) {
             document.getElementById('placeholder').classList.add('hidden');
             document.getElementById('results').classList.remove('hidden');
-
-            document.getElementById('twitter').innerHTML = data.twitter_threads.map((tweet, i) => 
-                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">${i+1}.</span> ${tweet}</div>`
-            ).join('');
-
+            document.getElementById('twitter').innerHTML = data.twitter_threads.map((t,i) => `<div class="bg-white dark:bg-gray-800 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${t}</div>`).join('');
             document.getElementById('linkedin').textContent = data.linkedin_post;
-
-            document.getElementById('instagram').innerHTML = data.instagram_captions.map((cap, i) => 
-                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">${i+1}.</span> ${cap}</div>`
-            ).join('');
-
-            document.getElementById('email').innerHTML = `<div class="bg-gray-900/50 p-3 rounded mb-2 text-gray-300"><strong class="text-white">Subject:</strong> ${data.email_newsletter.subject}</div>
-                <div class="bg-gray-900/50 p-3 rounded whitespace-pre-wrap text-gray-300">${data.email_newsletter.body}</div>`;
-
-            document.getElementById('tiktok').innerHTML = data.tiktok_scripts.map((script, i) => 
-                `<div class="bg-gray-900/50 p-3 rounded text-gray-300"><span class="text-purple-400 font-medium">Script ${i+1}:</span><br>${script}</div>`
-            ).join('');
-
+            document.getElementById('instagram').innerHTML = data.instagram_captions.map((c,i) => `<div class="bg-white dark:bg-gray-800 p-3 rounded"><span class="text-purple-600 font-medium">${i+1}.</span> ${c}</div>`).join('');
+            document.getElementById('email').innerHTML = `<div class="bg-white dark:bg-gray-800 p-3 rounded mb-2"><strong>Subject:</strong> ${data.email_newsletter.subject}</div><div class="bg-white dark:bg-gray-800 p-3 rounded whitespace-pre-wrap">${data.email_newsletter.body}</div>`;
+            document.getElementById('tiktok').innerHTML = data.tiktok_scripts.map((s,i) => `<div class="bg-white dark:bg-gray-800 p-3 rounded"><span class="text-purple-600 font-medium">Script ${i+1}:</span><br>${s}</div>`).join('');
             document.getElementById('youtube').textContent = data.youtube_description;
-
-            document.getElementById('hashtags').innerHTML = data.key_hashtags.map(tag => 
-                `<span class="inline-block bg-purple-900/50 text-purple-300 px-3 py-1 rounded-full mr-2 mb-2 border border-purple-700">#${tag}</span>`
-            ).join('');
+            document.getElementById('hashtags').innerHTML = data.key_hashtags.map(tag => `<span class="inline-block bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 px-3 py-1 rounded-full mr-2 mb-2">#${tag}</span>`).join('');
         }
-
         function copySection(section) {
-            const el = document.getElementById(section);
-            navigator.clipboard.writeText(el.innerText).then(() => {
+            navigator.clipboard.writeText(document.getElementById(section).innerText).then(() => {
                 const btn = event.target.closest('button');
-                const originalHTML = btn.innerHTML;
+                const orig = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                setTimeout(() => btn.innerHTML = originalHTML, 1500);
+                setTimeout(() => btn.innerHTML = orig, 1500);
             });
         }
-
-        async function logout() {
-            await fetch('/api/logout', { method: 'POST' });
-            window.location.href = '/';
-        }
+        async function logout() { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/'; }
     </script>
 </body>
 </html>

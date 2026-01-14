@@ -1,30 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContentBlast - AI Content Repurposing Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); }
-        .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card-dark { background: rgba(30, 30, 40, 0.8); backdrop-filter: blur(10px); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dark .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glow { box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); }
     </style>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    </script>
 </head>
-<body class="bg-gray-950 text-gray-100">
+<body class="bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
     <!-- Navigation -->
-    <nav class="bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50 border-b border-gray-800">
+    <nav class="bg-white dark:bg-gray-900/80 dark:backdrop-blur-md shadow-sm dark:shadow-lg fixed w-full z-50 dark:border-b dark:border-gray-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <span class="text-2xl font-bold gradient-text">⚡ ContentBlast</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="#pricing" class="text-gray-300 hover:text-white transition">Pricing</a>
-                    <a href="/login" class="text-gray-300 hover:text-white transition">Log In</a>
-                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition glow">
+                    <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">Pricing</a>
+                    <a href="/login" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">Log In</a>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+
+                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition">
                         Try Free →
                     </a>
                 </div>
@@ -33,9 +47,8 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="gradient-bg pt-32 pb-20 relative overflow-hidden">
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+    <section class="gradient-bg pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
                 Turn 1 Piece of Content<br>
                 <span class="text-yellow-300">Into 10+ Posts</span>
@@ -45,7 +58,7 @@
                 LinkedIn posts, Instagram captions, emails & more in seconds.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="/app" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg glow">
+                <a href="/app" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg">
                     🚀 Start Free - No Credit Card
                 </a>
             </div>
@@ -54,135 +67,150 @@
     </section>
 
     <!-- How it Works -->
-    <section class="py-20 bg-gray-900">
+    <section class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">How It Works</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">How It Works</h2>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center p-6 card-dark rounded-xl border border-gray-800">
-                    <div class="w-16 h-16 bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="text-3xl">📝</span>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2 text-white">1. Paste Your Content</h3>
-                    <p class="text-gray-400">Article, blog post, transcript, or any text content</p>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">1. Paste Your Content</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Article, blog post, transcript, or any text content</p>
                 </div>
-                <div class="text-center p-6 card-dark rounded-xl border border-gray-800">
-                    <div class="w-16 h-16 bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="text-3xl">⚡</span>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2 text-white">2. AI Magic</h3>
-                    <p class="text-gray-400">Our AI analyzes and transforms your content</p>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">2. AI Magic</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Our AI analyzes and transforms your content</p>
                 </div>
-                <div class="text-center p-6 card-dark rounded-xl border border-gray-800">
-                    <div class="w-16 h-16 bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="text-3xl">🎯</span>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2 text-white">3. Get 10+ Posts</h3>
-                    <p class="text-gray-400">Twitter, LinkedIn, Instagram, Email & more</p>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">3. Get 10+ Posts</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Twitter, LinkedIn, Instagram, Email & more</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Output Examples -->
-    <section class="py-20 bg-gray-950">
+    <section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">What You Get</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">What You Get</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
                         <i class="fab fa-twitter text-blue-400 text-xl mr-2"></i>
-                        <span class="font-semibold text-white">Twitter Thread</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">Twitter Thread</span>
                     </div>
-                    <p class="text-gray-400 text-sm">5 engaging tweets ready to post as a thread</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">5 engaging tweets ready to post as a thread</p>
                 </div>
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-linkedin text-blue-500 text-xl mr-2"></i>
-                        <span class="font-semibold text-white">LinkedIn Post</span>
+                        <i class="fab fa-linkedin text-blue-700 text-xl mr-2"></i>
+                        <span class="font-semibold text-gray-900 dark:text-white">LinkedIn Post</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Professional, engaging post with storytelling</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Professional, engaging post with storytelling</p>
                 </div>
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
                         <i class="fab fa-instagram text-pink-500 text-xl mr-2"></i>
-                        <span class="font-semibold text-white">Instagram Captions</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">Instagram Captions</span>
                     </div>
-                    <p class="text-gray-400 text-sm">3 casual, emoji-friendly captions</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">3 casual, emoji-friendly captions</p>
                 </div>
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
-                        <i class="fas fa-envelope text-gray-400 text-xl mr-2"></i>
-                        <span class="font-semibold text-white">Email Newsletter</span>
+                        <i class="fas fa-envelope text-gray-600 dark:text-gray-400 text-xl mr-2"></i>
+                        <span class="font-semibold text-gray-900 dark:text-white">Email Newsletter</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Subject line + body with clear CTA</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Subject line + body with clear CTA</p>
                 </div>
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-tiktok text-white text-xl mr-2"></i>
-                        <span class="font-semibold text-white">TikTok Scripts</span>
+                        <i class="fab fa-tiktok text-black dark:text-white text-xl mr-2"></i>
+                        <span class="font-semibold text-gray-900 dark:text-white">TikTok Scripts</span>
                     </div>
-                    <p class="text-gray-400 text-sm">2 hook-first video scripts</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">2 hook-first video scripts</p>
                 </div>
-                <div class="card-dark p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition">
+                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-youtube text-red-500 text-xl mr-2"></i>
-                        <span class="font-semibold text-white">YouTube Description</span>
+                        <i class="fab fa-youtube text-red-600 text-xl mr-2"></i>
+                        <span class="font-semibold text-gray-900 dark:text-white">YouTube Description</span>
                     </div>
-                    <p class="text-gray-400 text-sm">SEO-optimized video description</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">SEO-optimized video description</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Pricing -->
-    <section id="pricing" class="py-20 bg-gray-900">
+    <section id="pricing" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-white">Simple Pricing</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Simple Pricing</h2>
             <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="card-dark border border-gray-800 rounded-2xl p-8 hover:border-purple-500 transition">
-                    <h3 class="text-xl font-semibold mb-2 text-white">Starter</h3>
-                    <div class="text-4xl font-bold mb-4 text-white">$19<span class="text-lg text-gray-500">/mo</span></div>
+                <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-purple-500 transition">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Starter</h3>
+                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$19<span class="text-lg text-gray-500">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> 50 repurposes/month</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> Email support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 50 repurposes/month</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Email support</li>
                     </ul>
-                    <button class="w-full py-3 border-2 border-purple-500 text-purple-400 rounded-lg hover:bg-purple-500/10 transition">Get Started</button>
+                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition">Get Started</a>
                 </div>
-                <div class="card-dark border-2 border-purple-500 rounded-2xl p-8 relative glow">
+                <div class="bg-gray-50 dark:bg-gray-800/50 border-2 border-purple-600 rounded-2xl p-8 relative glow">
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm">Popular</div>
-                    <h3 class="text-xl font-semibold mb-2 text-white">Pro</h3>
-                    <div class="text-4xl font-bold mb-4 text-white">$49<span class="text-lg text-gray-500">/mo</span></div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Pro</h3>
+                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$49<span class="text-lg text-gray-500">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> 200 repurposes/month</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> Priority support</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> API access</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 200 repurposes/month</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Priority support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> API access</li>
                     </ul>
-                    <button class="w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition">Get Started</button>
+                    <a href="/pricing" class="block w-full py-3 text-center bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">Get Started</a>
                 </div>
-                <div class="card-dark border border-gray-800 rounded-2xl p-8 hover:border-purple-500 transition">
-                    <h3 class="text-xl font-semibold mb-2 text-white">Unlimited</h3>
-                    <div class="text-4xl font-bold mb-4 text-white">$99<span class="text-lg text-gray-500">/mo</span></div>
+                <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-purple-500 transition">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Unlimited</h3>
+                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$99<span class="text-lg text-gray-500">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> Unlimited repurposes</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> 24/7 support</li>
-                        <li class="flex items-center text-gray-300"><i class="fas fa-check text-green-400 mr-2"></i> Custom integrations</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Unlimited repurposes</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 24/7 support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Custom integrations</li>
                     </ul>
-                    <button class="w-full py-3 border-2 border-purple-500 text-purple-400 rounded-lg hover:bg-purple-500/10 transition">Get Started</button>
+                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition">Get Started</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-950 text-gray-400 py-12 border-t border-gray-800">
+    <footer class="bg-gray-900 dark:bg-gray-950 text-gray-400 py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <span class="text-2xl font-bold gradient-text">⚡ ContentBlast</span>
             <p class="mt-4">Turn any content into social media gold.</p>
             <p class="mt-8 text-sm text-gray-600">© 2026 ContentBlast. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
 </body>
 </html>

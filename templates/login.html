@@ -5,87 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ContentBlast</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card-dark { background: rgba(30, 30, 40, 0.9); backdrop-filter: blur(10px); }
-        .glow { box-shadow: 0 0 40px rgba(139, 92, 246, 0.2); }
-    </style>
+    <style>.gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }</style>
 </head>
-<body class="bg-gray-950 min-h-screen flex items-center justify-center">
+<body class="bg-gray-50 dark:bg-gray-950 min-h-screen flex items-center justify-center transition-colors duration-300">
+    <button id="themeToggle" class="fixed top-4 right-4 p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-300 dark:hover:bg-gray-700 transition shadow-lg z-50">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
     <div class="max-w-md w-full mx-4">
         <div class="text-center mb-8">
             <a href="/" class="text-3xl font-bold gradient-text">⚡ ContentBlast</a>
-            <p class="text-gray-400 mt-2">Welcome back!</p>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Welcome back!</p>
         </div>
-
-        <div class="card-dark rounded-2xl shadow-lg p-8 border border-gray-800 glow">
-            <h2 class="text-2xl font-bold mb-6 text-center text-white">Log In</h2>
-
+        <div class="bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">Log In</h2>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                    <input type="email" id="email" required
-                        class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
-                        placeholder="your@email.com">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">Email</label>
+                    <input type="email" id="email" required class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500" placeholder="your@email.com">
                 </div>
-
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Password</label>
-                    <input type="password" id="password" required
-                        class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
-                        placeholder="••••••••">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">Password</label>
+                    <input type="password" id="password" required class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500" placeholder="••••••••">
                 </div>
-
-                <div id="error" class="text-red-400 text-sm hidden"></div>
-
-                <button type="submit" 
-                    class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition">
-                    Log In
-                </button>
+                <div id="error" class="text-red-500 text-sm hidden"></div>
+                <button type="submit" class="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">Log In</button>
             </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-gray-400">
-                    Don't have an account? 
-                    <a href="/register" class="text-purple-400 font-semibold hover:text-purple-300">Sign Up</a>
-                </p>
-            </div>
+            <div class="mt-6 text-center"><p class="text-gray-600 dark:text-gray-400">Don't have an account? <a href="/register" class="text-purple-600 dark:text-purple-400 font-semibold">Sign Up</a></p></div>
         </div>
-
-        <div class="text-center mt-6">
-            <a href="/" class="text-gray-500 hover:text-gray-300 transition">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Home
-            </a>
-        </div>
+        <div class="text-center mt-6"><a href="/" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><i class="fas fa-arrow-left mr-2"></i>Back</a></div>
     </div>
-
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+    </script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorEl = document.getElementById('error');
-            errorEl.classList.add('hidden');
-
+            const formData = new FormData(); formData.append('email', document.getElementById('email').value); formData.append('password', document.getElementById('password').value);
             try {
-                const formData = new FormData();
-                formData.append('email', email);
-                formData.append('password', password);
-
                 const response = await fetch('/api/login', { method: 'POST', body: formData });
                 const data = await response.json();
-
-                if (data.success) {
-                    window.location.href = data.redirect || '/app';
-                } else {
-                    errorEl.textContent = data.error;
-                    errorEl.classList.remove('hidden');
-                }
-            } catch (error) {
-                errorEl.textContent = 'Something went wrong. Please try again.';
-                errorEl.classList.remove('hidden');
-            }
+                if (data.success) { window.location.href = data.redirect || '/app'; } else { document.getElementById('error').textContent = data.error; document.getElementById('error').classList.remove('hidden'); }
+            } catch (error) { document.getElementById('error').textContent = 'Error'; document.getElementById('error').classList.remove('hidden'); }
         });
     </script>
 </body>
