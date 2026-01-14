@@ -10,11 +10,21 @@ class ContentRepurposer:
     """
 
     def __init__(self, api_key: str = None):
-        self.client = OpenAI(
-            api_key=api_key or os.getenv("OPENAI_API_KEY"),
-            base_url=os.getenv("OPENAI_API_BASE", "https://api.groq.com/openai/v1")
-        )
-        self.model = "llama-3.3-70b-versatile"  # Groq's best model
+        self.api_key = api_key
+        self.client = None  # Lazy initialization
+        self.model = "llama-3.3-70b-versatile"
+
+    def _get_client(self):
+        """Lazy initialization of OpenAI client."""
+        if self.client is None:
+            key = self.api_key or os.getenv("OPENAI_API_KEY")
+            if not key:
+                raise ValueError("OPENAI_API_KEY not set. Please configure environment variables.")
+            self.client = OpenAI(
+                api_key=key,
+                base_url=os.getenv("OPENAI_API_BASE", "https://api.groq.com/openai/v1")
+            )
+        return self.client
 
     def repurpose(self, content: str, content_type: str = "article") -> Dict:
         """
@@ -55,7 +65,8 @@ Respond with this exact JSON structure (no markdown!):
 }}"""
 
         try:
-            response = self.client.chat.completions.create(
+            client = self._get_client()
+            response = client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -85,6 +96,8 @@ Respond with this exact JSON structure (no markdown!):
 
         except json.JSONDecodeError as e:
             return {"success": False, "error": f"JSON parsing error: {str(e)}", "raw": result_text if 'result_text' in dir() else "No response"}
+        except ValueError as e:
+            return {"success": False, "error": str(e)}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
@@ -97,5 +110,5 @@ Respond with this exact JSON structure (no markdown!):
 
         return {
             "estimated_tokens": int(input_tokens + output_tokens),
-            "estimated_cost_usd": 0.00  # Groq free tier!
+            "estimated_cost_usd": 0.00
         }
