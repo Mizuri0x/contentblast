@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +7,79 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .dark .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glow { box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); }
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Jasper-style gradient */
+        .jasper-gradient {
+            background: linear-gradient(135deg, 
+                #7c3aed 0%, 
+                #a855f7 25%, 
+                #ec4899 50%, 
+                #f97316 75%, 
+                #fbbf24 100%);
+        }
+
+        .jasper-gradient-text {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dark .gradient-text {
+            background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-btn {
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 0 60px rgba(236, 72, 153, 0.5);
+        }
+
+        /* Animated gradient background */
+        .animated-gradient {
+            background: linear-gradient(-45deg, #7c3aed, #a855f7, #ec4899, #f97316);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Logo grayscale */
+        .logo-gray {
+            filter: grayscale(100%) brightness(0.8);
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+        .logo-gray:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
     </style>
     <script>
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
         }
     </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-900/80 dark:backdrop-blur-md shadow-sm dark:shadow-lg fixed w-full z-50 dark:border-b dark:border-gray-800 transition-colors duration-300">
+    <nav class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm dark:shadow-lg fixed w-full z-50 dark:border-b dark:border-gray-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -31,14 +88,11 @@
                 <div class="flex items-center space-x-4">
                     <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">Pricing</a>
                     <a href="/login" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">Log In</a>
-
-                    <!-- Dark Mode Toggle -->
                     <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                         <i class="fas fa-moon dark:hidden"></i>
                         <i class="fas fa-sun hidden dark:inline"></i>
                     </button>
-
-                    <a href="/register" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-500 transition">
+                    <a href="/register" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-5 py-2 rounded-lg hover:from-purple-500 hover:to-pink-500 transition font-medium glow-btn">
                         Try Free →
                     </a>
                 </div>
@@ -46,146 +100,226 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="gradient-bg pt-32 pb-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                Turn 1 Piece of Content<br>
-                <span class="text-yellow-300">Into 10+ Posts</span>
+    <!-- Hero Section - Jasper Style -->
+    <section class="animated-gradient pt-32 pb-24 relative overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/30">
+                <span class="text-white text-sm font-medium">🚀 Powered by AI • 10x faster content creation</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+                Turn One Piece of Content<br>
+                <span class="text-yellow-300">Into 10+ Social Posts</span>
             </h1>
-            <p class="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+
+            <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-3xl mx-auto font-medium">
                 AI-powered content repurposing. Paste your article, get Twitter threads, 
-                LinkedIn posts, Instagram captions, emails & more in seconds.
+                LinkedIn posts, Instagram captions & more in seconds.
             </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="/app" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg">
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                <a href="/app" class="bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-bold hover:bg-gray-100 transition shadow-2xl hover:scale-105 transform">
                     🚀 Start Free - No Credit Card
                 </a>
+                <a href="#demo" class="bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white/30 transition border border-white/30">
+                    <i class="fas fa-play mr-2"></i> Watch Demo
+                </a>
             </div>
-            <p class="text-purple-200 mt-4">✓ 5 free repurposes ✓ No signup required</p>
+
+            <p class="text-white/80 text-sm">
+                ✓ 5 free repurposes &nbsp; ✓ No signup required &nbsp; ✓ All platforms included
+            </p>
+        </div>
+    </section>
+
+    <!-- Social Proof Section - Jasper Style -->
+    <section class="py-12 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <p class="text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider text-sm">
+                    Trusted by 10,000+ content creators & marketers
+                </p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold jasper-gradient-text">10K+</div>
+                    <div class="text-gray-600 dark:text-gray-400 text-sm mt-1">Active Users</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold jasper-gradient-text">500K+</div>
+                    <div class="text-gray-600 dark:text-gray-400 text-sm mt-1">Posts Created</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold jasper-gradient-text">4.9/5</div>
+                    <div class="text-gray-600 dark:text-gray-400 text-sm mt-1">User Rating</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold jasper-gradient-text">10hrs</div>
+                    <div class="text-gray-600 dark:text-gray-400 text-sm mt-1">Saved Weekly</div>
+                </div>
+            </div>
+
+            <!-- Company Logos -->
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+                <div class="logo-gray text-2xl font-bold text-gray-400 dark:text-gray-600"><i class="fab fa-google"></i> Google</div>
+                <div class="logo-gray text-2xl font-bold text-gray-400 dark:text-gray-600"><i class="fab fa-microsoft"></i> Microsoft</div>
+                <div class="logo-gray text-2xl font-bold text-gray-400 dark:text-gray-600"><i class="fab fa-spotify"></i> Spotify</div>
+                <div class="logo-gray text-2xl font-bold text-gray-400 dark:text-gray-600"><i class="fab fa-slack"></i> Slack</div>
+                <div class="logo-gray text-2xl font-bold text-gray-400 dark:text-gray-600"><i class="fab fa-shopify"></i> Shopify</div>
+            </div>
         </div>
     </section>
 
     <!-- How it Works -->
-    <section class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">How It Works</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">How It Works</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center mb-12 text-lg">Three simple steps to 10x your content output</p>
+
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-3xl">📝</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">1. Paste Your Content</h3>
+                <div class="text-center p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">1</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Paste Your Content</h3>
                     <p class="text-gray-600 dark:text-gray-400">Article, blog post, transcript, or any text content</p>
                 </div>
-                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-3xl">⚡</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">2. AI Magic</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Our AI analyzes and transforms your content</p>
+                <div class="text-center p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">2</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">AI Magic Happens</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Our AI analyzes and transforms your content instantly</p>
                 </div>
-                <div class="text-center p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-3xl">🎯</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">3. Get 10+ Posts</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Twitter, LinkedIn, Instagram, Email & more</p>
+                <div class="text-center p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">3</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Get 10+ Posts</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Twitter, LinkedIn, Instagram, Email & more ready to post</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Output Examples -->
-    <section class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+    <section class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">What You Get</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">What You Get</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center mb-12 text-lg">One click, all platforms covered</p>
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-twitter text-blue-400 text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">Twitter Thread</span>
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fab fa-twitter text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">Twitter Thread</span>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">5 engaging tweets ready to post as a thread</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">5 engaging tweets ready to post as a viral thread</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-linkedin text-blue-700 text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">LinkedIn Post</span>
+                        <div class="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fab fa-linkedin-in text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">LinkedIn Post</span>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Professional, engaging post with storytelling</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Professional post with storytelling hooks</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-instagram text-pink-500 text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">Instagram Captions</span>
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fab fa-instagram text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">Instagram Captions</span>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">3 casual, emoji-friendly captions</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">3 scroll-stopping captions with emojis</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fas fa-envelope text-gray-600 dark:text-gray-400 text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">Email Newsletter</span>
+                        <div class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-envelope text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">Email Newsletter</span>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Subject line + body with clear CTA</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Subject + body with clear CTA</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-tiktok text-black dark:text-white text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">TikTok Scripts</span>
+                        <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center mr-3">
+                            <i class="fab fa-tiktok text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">TikTok Scripts</span>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 text-sm">2 hook-first video scripts</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800/50 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition">
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-500 transition-all duration-300 group">
                     <div class="flex items-center mb-3">
-                        <i class="fab fa-youtube text-red-600 text-xl mr-2"></i>
-                        <span class="font-semibold text-gray-900 dark:text-white">YouTube Description</span>
+                        <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fab fa-youtube text-white"></i>
+                        </div>
+                        <span class="font-bold text-gray-900 dark:text-white">YouTube Description</span>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">SEO-optimized video description</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">SEO-optimized description + timestamps</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Pricing -->
-    <section id="pricing" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <section id="pricing" class="py-20 bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Simple Pricing</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">Simple Pricing</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center mb-12 text-lg">Start free, scale as you grow</p>
+
             <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-purple-500 transition">
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Starter</h3>
-                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$19<span class="text-lg text-gray-500">/mo</span></div>
+                <div class="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Starter</h3>
+                    <div class="text-4xl font-extrabold mb-4 text-gray-900 dark:text-white">$19<span class="text-lg text-gray-500 font-normal">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 50 repurposes/month</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Email support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> 50 repurposes/month</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> Email support</li>
                     </ul>
-                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition">Get Started</a>
+                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition font-semibold">Get Started</a>
                 </div>
-                <div class="bg-gray-50 dark:bg-gray-800/50 border-2 border-purple-600 rounded-2xl p-8 relative glow">
-                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm">Popular</div>
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Pro</h3>
-                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$49<span class="text-lg text-gray-500">/mo</span></div>
+                <div class="bg-white dark:bg-gray-800/50 border-2 border-purple-500 rounded-2xl p-8 relative shadow-xl scale-105">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-bold">MOST POPULAR</div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Pro</h3>
+                    <div class="text-4xl font-extrabold mb-4 jasper-gradient-text">$49<span class="text-lg text-gray-500 font-normal">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 200 repurposes/month</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Priority support</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> API access</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> 200 repurposes/month</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> Priority support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> API access</li>
                     </ul>
-                    <a href="/pricing" class="block w-full py-3 text-center bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">Get Started</a>
+                    <a href="/pricing" class="block w-full py-3 text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition font-bold glow-btn">Get Started</a>
                 </div>
-                <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-purple-500 transition">
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Unlimited</h3>
-                    <div class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">$99<span class="text-lg text-gray-500">/mo</span></div>
+                <div class="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Unlimited</h3>
+                    <div class="text-4xl font-extrabold mb-4 text-gray-900 dark:text-white">$99<span class="text-lg text-gray-500 font-normal">/mo</span></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Unlimited repurposes</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> All platforms</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> 24/7 support</li>
-                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-2"></i> Custom integrations</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> Unlimited repurposes</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> All platforms</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> 24/7 support</li>
+                        <li class="flex items-center text-gray-600 dark:text-gray-300"><i class="fas fa-check text-green-500 mr-3"></i> Custom integrations</li>
                     </ul>
-                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-purple-600 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition">Get Started</a>
+                    <a href="/pricing" class="block w-full py-3 text-center border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition font-semibold">Get Started</a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 jasper-gradient">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">Ready to 10x Your Content?</h2>
+            <p class="text-xl text-white/90 mb-8">Join 10,000+ creators saving hours every week</p>
+            <a href="/register" class="inline-block bg-white text-gray-900 px-10 py-4 rounded-xl text-lg font-bold hover:bg-gray-100 transition shadow-2xl hover:scale-105 transform">
+                Start Free Today →
+            </a>
         </div>
     </section>
 
@@ -199,17 +333,9 @@
     </footer>
 
     <script>
-        // Theme Toggle
         document.getElementById('themeToggle').addEventListener('click', function() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
-                localStorage.setItem('theme', 'dark');
-            }
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         });
     </script>
 </body>
